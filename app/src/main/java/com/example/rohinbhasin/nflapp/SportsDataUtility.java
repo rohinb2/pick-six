@@ -1,30 +1,26 @@
 package com.example.rohinbhasin.nflapp;
 
-import android.telephony.CellIdentityCdma;
 import android.util.Base64;
 
+import com.example.rohinbhasin.nflapp.JsonClasses.Score;
+import com.example.rohinbhasin.nflapp.JsonClasses.ScoreboardWrapper;
 import com.google.gson.Gson;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 
 /**
- * Created by rohinbhasin on 11/9/17.
+ * A class for getting data for Scores for a the NFL app.
  */
-
 public class SportsDataUtility {
 
     private static final int END_INDEX_FOR_DATE = 8;
@@ -37,90 +33,84 @@ public class SportsDataUtility {
         }
     }
 
-    private static int getDateAsInteger(Date dateToFormat) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
-        String formattedTime = dateFormat.format(dateToFormat);
-        String date = formattedTime.substring(0, END_INDEX_FOR_DATE);
-        return Integer.valueOf(date);
-    }
-
     /**
-     * Gets what day of the week it is (e.g. Mon, Tue, etc)
+     * Meat of the method for the class, gets scores for the week starting Thursday.
      *
-     * @return int: an integer that represents what day of the week it is.
+     * @return ArrayList of Score objects for all the games occurring that week.
      */
-    private static int getCurrentDayOfWeek() {
-
-        final HashMap<String, Integer> DAYS_AS_INTEGERS = new HashMap<String, Integer>() {
-            {
-                put("Sun", 0);
-                put("Mon", 1);
-                put("Tue", 2);
-                put("Wed", 3);
-                put("Thu", 4);
-                put("Fri", 5);
-                put("Sat", 6);
-            }
-        };
-        Calendar c = Calendar.getInstance();
-        return DAYS_AS_INTEGERS.get(c.getTime().toString().substring(0, END_INDEX_FOR_DAY));
-    }
-
     public static ArrayList<Score> getScoresForCurrentWeek() {
         ArrayList<Score> fullWeekScores = new ArrayList<>();
         final int DAY_OF_THE_WEEK = getCurrentDayOfWeek();
+        Calendar dateToStartFrom = Calendar.getInstance();
 
         switch (DAY_OF_THE_WEEK) {
             case 0:
-                addScoresBasedOnDay(fullWeekScores, 0, 1, -4);
+                dateToStartFrom.add(Calendar.DATE, -3);
+                addScoresStartingOnDay(fullWeekScores, dateToStartFrom);
                 break;
             case 1:
-                addScoresBasedOnDay(fullWeekScores, 0, -1, -3);
+                dateToStartFrom.add(Calendar.DATE, -4);
+                addScoresStartingOnDay(fullWeekScores, dateToStartFrom);
                 break;
             case 2:
-                addScoresBasedOnDay(fullWeekScores, -1, -2, -3);
+                dateToStartFrom.add(Calendar.DATE, -5);
+                addScoresStartingOnDay(fullWeekScores, dateToStartFrom);
                 break;
             case 3:
-                addScoresBasedOnDay(fullWeekScores, 1, 3, 1);
+                dateToStartFrom.add(Calendar.DATE, 1);
+                addScoresStartingOnDay(fullWeekScores, dateToStartFrom);
                 break;
             case 4:
-                addScoresBasedOnDay(fullWeekScores, 0, 3, 1);
+                dateToStartFrom.add(Calendar.DATE, 0);
+                addScoresStartingOnDay(fullWeekScores, dateToStartFrom);
                 break;
             case 5:
-                addScoresBasedOnDay(fullWeekScores, 2, 1, -4);
+                dateToStartFrom.add(Calendar.DATE, -1);
+                addScoresStartingOnDay(fullWeekScores, dateToStartFrom);
                 break;
             case 6:
-                addScoresBasedOnDay(fullWeekScores, 1, 2, -4);
+                dateToStartFrom.add(Calendar.DATE, -2);
+                addScoresStartingOnDay(fullWeekScores, dateToStartFrom);
+                break;
         }
         return fullWeekScores;
     }
 
-    private static void addScoresBasedOnDay(ArrayList<Score> scores, int firstDay, int secondDay, int thirdDay) {
-        Calendar currentDate = Calendar.getInstance();
-
-        currentDate.add(Calendar.DATE, firstDay);
-        addScoresFromADate(scores, currentDate);
-
-        currentDate.add(Calendar.DATE, secondDay);
-        addScoresFromADate(scores, currentDate);
-
-        currentDate.add(Calendar.DATE, thirdDay);
-        addScoresFromADate(scores, currentDate);
+    /**
+     * Adds all scores in a week starting on any given day of that week.
+     *
+     * @param scores ArrayList<Score>: A collection of scores to add to.
+     * @param firstDay Calendar: a calendar object of the first day to start on.
+     */
+    private static void addScoresStartingOnDay(ArrayList<Score> scores, Calendar firstDay) {
+        for (int i = 0; i < 7; i++) {
+            addScoresFromDate(scores, firstDay);
+            firstDay.add(Calendar.DATE, 1);
+        }
     }
 
-    private static void addScoresFromADate(ArrayList<Score> scores, Calendar calendarDate) {
+    /**
+     * Adds all scores from an inputted Calendar Date to the scores array.
+     *
+     * @param scores ArrayList<Score>: a collection of scores for games in a given week.
+     * @param calendarDate Calendar: the date to add scores from.
+     */
+    private static void addScoresFromDate(ArrayList<Score> scores, Calendar calendarDate) {
         Date d = calendarDate.getTime();
-        Score[] scoresForDate = getScoresForDate(getDateAsInteger(d));
-        scores.addAll(Arrays.asList(scoresForDate));
+        Score[] scoresForDate = getScoresForDate(getDateAsString(d));
+
+        if (scoresForDate != null) {
+            scores.addAll(Arrays.asList(scoresForDate));
+        }
     }
 
     /**
      * Makes call to API with a given integer date and gets a JSON parsed result.
      *
-     * @param dateForScores int: date in YYYYMMDD format that represents today's date.
+     * @param dateForScores String: date in YYYYMMDD format that date to request for.
      * @return ScoreboardWrapper: Parsed JSON result.
      */
-    private static ScoreboardWrapper getScoreboardForDate(int dateForScores) {
+    private static ScoreboardWrapper getScoreboardForDate(String dateForScores) {
 
         final String AUTHENTICATION_STRING = "r_bhasin7:rohin";
         String urlString = "https://api.mysportsfeeds.com/v1.1/pull/nfl/2017-regular/scoreboard.json?fordate=" + dateForScores;
@@ -130,7 +120,7 @@ public class SportsDataUtility {
 
             URL url = new URL(urlString);
             byte[] data = AUTHENTICATION_STRING.getBytes("UTF-8");
-            String encoding = RohinEncode.encodeToString(data, RohinEncode.DEFAULT).replace("\n", "");
+            String encoding = RohinEncode.encodeToString(data, Base64.DEFAULT).replace("\n", "");
 
             URLConnection connection = url.openConnection();
             connection.setDoOutput(true);
@@ -153,12 +143,46 @@ public class SportsDataUtility {
     }
 
     /**
+     * Takes in a date to get the NFL games and scores of games on that date.
      *
-     *
-     * @param dateForScores
-     * @return
+     * @param date String: Date in format YYYYMMDD
+     * @return Score[]: the scores for the games on that day.
      */
-    private static Score[] getScoresForDate(int dateForScores) {
-        return getScoreboardForDate(dateForScores).getScoreboard().getGameScore();
+    private static Score[] getScoresForDate(String date) {
+        return getScoreboardForDate(date).getScoreboard().getGameScore();
+    }
+
+    /**
+     * Gets a Date as a String.
+     *
+     * @param dateToFormat Date object of any date.
+     * @return String: The date in format of a String YYYYMMDD.
+     */
+    private static String getDateAsString(Date dateToFormat) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+        String formattedTime = dateFormat.format(dateToFormat);
+        return formattedTime.substring(0, END_INDEX_FOR_DATE);
+    }
+
+    /**
+     * Gets what day of the week it is (e.g. Mon, Tue, etc)
+     *
+     * @return int: an integer that represents what day of the week it is.
+     */
+    private static int getCurrentDayOfWeek() {
+
+        final HashMap<String, Integer> DAYS_AS_INTEGERS = new HashMap<String, Integer>() {
+            {
+                put("Sun", 0);
+                put("Mon", 1);
+                put("Tue", 2);
+                put("Wed", 3);
+                put("Thu", 4);
+                put("Fri", 5);
+                put("Sat", 6);
+            }
+        };
+        Calendar c = Calendar.getInstance();
+        return DAYS_AS_INTEGERS.get(c.getTime().toString().substring(0, END_INDEX_FOR_DAY));
     }
 }

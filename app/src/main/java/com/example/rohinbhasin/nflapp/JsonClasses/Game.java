@@ -1,4 +1,4 @@
-package com.example.rohinbhasin.nflapp;
+package com.example.rohinbhasin.nflapp.JsonClasses;
 
 import android.os.Parcel;
 import android.os.Parcelable;
