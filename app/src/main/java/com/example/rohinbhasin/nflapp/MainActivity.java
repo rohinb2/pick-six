@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 
 import com.example.rohinbhasin.nflapp.JsonClasses.Score;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -22,17 +23,18 @@ public class MainActivity extends AppCompatActivity {
         nflScoresListView = (RecyclerView) findViewById(R.id.score_viewer);
         nflScoresListView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
+        new SportsFeedsAsyncTask().execute(0);
     }
 
-    public class SportsFeedsAsyncTask extends AsyncTask<Integer, Integer, List<Score>> {
+    public class SportsFeedsAsyncTask extends AsyncTask<Integer, Integer, ArrayList<Score>> {
 
         @Override
-        protected List<Score> doInBackground(Integer... cityID) {
+        protected ArrayList<Score> doInBackground(Integer... footballID) {
             return SportsDataUtility.getScoresForCurrentWeek();
         }
 
         @Override
-        protected void onPostExecute(List<Score> scores) {
+        protected void onPostExecute(ArrayList<Score> scores) {
             ScoreDisplayAdapter adapter = new ScoreDisplayAdapter(scores);
             nflScoresListView.setAdapter(adapter);
         }

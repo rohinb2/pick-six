@@ -1,6 +1,8 @@
 package com.example.rohinbhasin.nflapp;
 
+import android.nfc.Tag;
 import android.util.Base64;
+import android.util.Log;
 
 import com.example.rohinbhasin.nflapp.JsonClasses.Score;
 import com.example.rohinbhasin.nflapp.JsonClasses.ScoreboardWrapper;
@@ -123,7 +125,6 @@ public class SportsDataUtility {
             String encoding = RohinEncode.encodeToString(data, Base64.DEFAULT).replace("\n", "");
 
             URLConnection connection = url.openConnection();
-            connection.setDoOutput(true);
             connection.setRequestProperty("Authorization", "Basic " + encoding);
             connection.connect();
 
@@ -132,7 +133,7 @@ public class SportsDataUtility {
 
             Gson gson = new Gson();
             ScoreboardWrapper score = gson.fromJson(inStreamReader, ScoreboardWrapper.class);
-
+            Log.d("RETURNING SCORE", score.getScoreboard().getLastUpdatedOn());
             return score;
 
         } catch (IOException e) {
@@ -149,7 +150,12 @@ public class SportsDataUtility {
      * @return Score[]: the scores for the games on that day.
      */
     private static Score[] getScoresForDate(String date) {
-        return getScoreboardForDate(date).getScoreboard().getGameScore();
+        ScoreboardWrapper res = getScoreboardForDate(date);
+        if (res != null) {
+            return res.getScoreboard().getGameScore();
+        } else {
+            return null;
+        }
     }
 
     /**

@@ -10,8 +10,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.rohinbhasin.nflapp.JsonClasses.Score;
-import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,20 +28,19 @@ public class ScoreDisplayAdapter extends RecyclerView.Adapter {
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         // inflate the layout of a restaurant item that will be within the recycler view
-        View restaurantItem = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.restaurant, parent, false);
-        return new ViewHolder(restaurantItem);
+        View scoreItem = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.game_score, parent, false);
+        return new ViewHolder(scoreItem);
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
         // cast the view holder so that we can access its extended variables
-        ViewHolder viewOfRestaurant = (ViewHolder) holder;
+        ViewHolder viewOfGame = (ViewHolder) holder;
         final Score gameScore = listOfScores.get(position);
-        viewOfRestaurant.restaurantNameView.setText(restaurant.getName());
-        viewOfRestaurant.restaurantLocationView.setText(restaurant.getLocation().getAddress());
-        viewOfRestaurant.restaurantCuisineView.setText(restaurant.getCuisines());
+        viewOfGame.gameCompetitorsView.setText(gameScore.getGame().getAwayTeam().getName() + " vs. " + gameScore.getGame().getHomeTeam().getName());
+        viewOfGame.gameTimeView.setText(gameScore.getGame().getDate());
 
     }
 
@@ -54,19 +51,16 @@ public class ScoreDisplayAdapter extends RecyclerView.Adapter {
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        public View restaurantView;
-        public TextView restaurantNameView;
-        public TextView restaurantLocationView;
-        public TextView restaurantCuisineView;
-        public ImageView restaurantImageView;
+        public View scoreView;
+        public TextView gameCompetitorsView;
+        public TextView gameTimeView;
 
-        public ViewHolder(View restaurantView) {
-            super(restaurantView);
-            this.restaurantView = restaurantView;
-            this.restaurantNameView = (TextView) restaurantView.findViewById(R.id.restaurant_name);
-            this.restaurantLocationView = (TextView) restaurantView.findViewById(R.id.restaurant_location);
-            this.restaurantCuisineView = (TextView) restaurantView.findViewById(R.id.restaurant_cuisine);
-            this.restaurantImageView = (ImageView) restaurantView.findViewById(R.id.restaurant_image);
+
+        public ViewHolder(View scoreView) {
+            super(scoreView);
+            this.scoreView = scoreView;
+            this.gameCompetitorsView = (TextView) scoreView.findViewById(R.id.teams_competing);
+            this.gameTimeView = (TextView) scoreView.findViewById(R.id.time_of_game);
         }
 
     }
