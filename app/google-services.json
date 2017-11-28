@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "181672608898",
+    "firebase_url": "https://pick-six.firebaseio.com",
+    "project_id": "pick-six",
+    "storage_bucket": "pick-six.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:181672608898:android:cf002c7aaa7539f6",
+        "android_client_info": {
+          "package_name": "com.example.rohinbhasin.picksix"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "181672608898-1dr3ikfi87a0dni7srpfnk0t2mdcsgo4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.rohinbhasin.picksix",
+            "certificate_hash": "1a36fed9cdef363d16ab6d7dc8dd127351c52a73"
+          }
+        },
+        {
+          "client_id": "181672608898-cqdb3cksd336ls4eonq6g3rjr8lvhf6a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAy1DLSeuNo6hqWWzOUNG0QGqa3HhKgkKQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "181672608898-cqdb3cksd336ls4eonq6g3rjr8lvhf6a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

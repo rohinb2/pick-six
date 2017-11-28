@@ -122,7 +122,7 @@ public class SportsDataUtility {
 
             URL url = new URL(urlString);
             byte[] data = AUTHENTICATION_STRING.getBytes("UTF-8");
-            String encoding = RohinEncode.encodeToString(data, Base64.DEFAULT).replace("\n", "");
+            String encoding = Base64.encodeToString(data, Base64.DEFAULT).replace("\n", "");
 
             URLConnection connection = url.openConnection();
             connection.setRequestProperty("Authorization", "Basic " + encoding);
