@@ -2,7 +2,6 @@ package com.example.rohinbhasin.nflapp;
 
 import android.content.Context;
 import android.content.Intent;
-import android.media.Image;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,19 +12,18 @@ import android.widget.TextView;
 import com.example.rohinbhasin.nflapp.JsonClasses.Game;
 import com.example.rohinbhasin.nflapp.JsonClasses.Score;
 import com.example.rohinbhasin.nflapp.JsonClasses.Team;
-import com.example.rohinbhasin.nflapp.JsonClasses.TeamLogos;
 import com.squareup.picasso.Picasso;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
- *
+ * Display adapter that populates the Recycler View holders.
  */
 public class ScoreDisplayAdapter extends RecyclerView.Adapter {
 
+    private static final String TRUE = "true";
     private List<Score> listOfScores = new ArrayList<>();
 
     public ScoreDisplayAdapter(List<Score> scores) {
@@ -43,23 +41,31 @@ public class ScoreDisplayAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-
-        // cast the view holder so that we can access its extended variables
         ViewHolder viewOfGame = (ViewHolder) holder;
 
         final Score GAME_SCORE = listOfScores.get(position);
-        final Team AWAY_TEAM = GAME_SCORE.getGame().getAwayTeam();
-        final Team HOME_TEAM = GAME_SCORE.getGame().getHomeTeam();
+        final Game GAME = GAME_SCORE.getGame();
+        final Team AWAY_TEAM = GAME.getAwayTeam();
+        final Team HOME_TEAM = GAME.getHomeTeam();
 
         viewOfGame.awayTeamView.setText(AWAY_TEAM.getName());
         viewOfGame.awayCityView.setText(AWAY_TEAM.getCity());
         viewOfGame.homeTeamView.setText(HOME_TEAM.getName());
         viewOfGame.homeCityView.setText(HOME_TEAM.getCity());
-        if (GAME_SCORE.getIsUnplayed().equals("true")) {
-            viewOfGame.statusView.setText(GAME_SCORE.getGame().getTime());
+
+        final String SCORE_DISPLAY = GAME_SCORE.getAwayScore() + " - " + GAME_SCORE.getHomeScore();
+        final String FINAL_SCORE = "Final\n" + SCORE_DISPLAY;
+        final String CURRENT_SCORE = "Current\n" + SCORE_DISPLAY;
+        final String DATE_DISPLAY = reformatDate(GAME.getDate()) + "\n" + GAME.getTime();
+
+        if (GAME_SCORE.getIsUnplayed().equals(TRUE)) {
+            viewOfGame.statusView.setText(DATE_DISPLAY);
+        } else if (GAME_SCORE.getIsInProgress().equals(TRUE)){
+            viewOfGame.statusView.setText(CURRENT_SCORE);
         } else {
-            viewOfGame.statusView.setText(GAME_SCORE.getAwayScore() + " - " + GAME_SCORE.getHomeScore());
+            viewOfGame.statusView.setText(FINAL_SCORE);
         }
+
         try {
             final Context context = viewOfGame.scoreView.getContext();
             final String AWAY_TEAM_URL = TeamLogos.getLogoURLForTeam(AWAY_TEAM.getName());
@@ -71,7 +77,6 @@ public class ScoreDisplayAdapter extends RecyclerView.Adapter {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
 
         viewOfGame.scoreView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,10 +125,19 @@ public class ScoreDisplayAdapter extends RecyclerView.Adapter {
     /**
      * Takes in a date and changes format of String to one that is printable.
      *
-     * @param date
-     * @return
+     * @param date String: Date in format YYYY-MM-DD
+     * @return Reformatted String with day of week, month, and day as words.
      */
-    public static String reformatDate(String date) {
-        return"";
+    private static String reformatDate(String date) {
+        String[] componentsOfDate = date.split("-");
+
+        final int YEAR = Integer.valueOf(componentsOfDate[0]);
+        final int MONTH = Integer.valueOf(componentsOfDate[1]);
+        final int DAY = Integer.valueOf(componentsOfDate[2]);
+        final int ARBITRARY_TIME = 1;
+        final int END_INDEX_FOR_DATE = 10;
+
+        Date dateToFormat = new Date(YEAR, MONTH, DAY, ARBITRARY_TIME, ARBITRARY_TIME, ARBITRARY_TIME);
+        return dateToFormat.toString().substring(0, END_INDEX_FOR_DATE);
     }
 }

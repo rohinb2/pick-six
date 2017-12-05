@@ -2,12 +2,14 @@ package com.example.rohinbhasin.nflapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +26,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import org.w3c.dom.Text;
+
 // NOTE: Code was primarily taken from Firebase tutorials
 // https://firebase.google.com/docs/auth/android/google-signin
 
@@ -33,14 +37,13 @@ import com.google.firebase.auth.GoogleAuthProvider;
 public class SignInActivity extends AppCompatActivity implements View.OnClickListener {
 
     public static final String SIGNED_OUT = "Signed out";
-    public static final String SIGNED_IN = "Signed in as: ";
     public static final String TAG = "GOOGLE: ";
     private static final String SERVER_ID = "181672608898-cqdb3cksd336ls4eonq6g3rjr8lvhf6a.apps.googleusercontent.com";
     private static final int RC_SIGN_IN = 9001;
 
     private FirebaseAuth mAuth;
     private GoogleSignInClient googleSignInClient;
-    private TextView statusTextView;
+    private TextView titleView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +51,8 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.activity_sign_in);
 
         mAuth = FirebaseAuth.getInstance();
-        statusTextView = findViewById(R.id.status_view);
+        titleView = (TextView) findViewById(R.id.title_view);
         findViewById(R.id.sign_in_button).setOnClickListener(this);
-        findViewById(R.id.sign_out_button).setOnClickListener(this);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
@@ -58,13 +60,16 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                 .build();
 
         googleSignInClient = GoogleSignIn.getClient(this, gso);
-    }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        updateUI(account);
+        // checks if the view was created as a result of signing out from the app.
+        Intent signedOutIntent = getIntent();
+        if (signedOutIntent.getIntExtra("launchedFromMain", 0) == 1) {
+            signOut();
+        } else {
+            GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+            updateUI(account);
+        }
+
     }
 
     @Override
@@ -122,13 +127,11 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     private void updateUI(@Nullable GoogleSignInAccount account) {
         if (account != null) {
             findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-
             final Context context = getApplicationContext();
             Intent signedIn = new Intent(context, MainActivity.class);
             context.startActivity(signedIn);
-
+            finish();
         } else {
-            statusTextView.setText(SIGNED_OUT);
             findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
         }
     }
@@ -162,9 +165,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         switch (v.getId()) {
             case R.id.sign_in_button:
                 signIn();
-                break;
-            case R.id.sign_out_button:
-                signOut();
                 break;
         }
     }

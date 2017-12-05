@@ -9,6 +9,7 @@
         android:enabled="true"
         android:title="Sign Out"
         android:visible="true"
+        android:onClick="signOut"
         app:showAsAction="always" />
 
 </menu>

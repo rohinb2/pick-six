@@ -1,4 +1,4 @@
-package com.example.rohinbhasin.nflapp.JsonClasses;
+package com.example.rohinbhasin.nflapp;
 
 import java.util.HashMap;
 
