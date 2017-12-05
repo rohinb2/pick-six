@@ -28,13 +28,6 @@ public class SportsDataUtility {
     private static final int END_INDEX_FOR_DATE = 8;
     private static final int END_INDEX_FOR_DAY = 3;
 
-    public static void main(String[] args) {
-        ArrayList<Score> scores = getScoresForCurrentWeek();
-        for (Score s : scores) {
-            System.out.println(s.getGame().getAwayTeam().getName() + " vs " + s.getGame().getHomeTeam().getName());
-        }
-    }
-
     /**
      * Meat of the method for the class, gets scores for the week starting Thursday.
      *
@@ -150,9 +143,9 @@ public class SportsDataUtility {
      * @return Score[]: the scores for the games on that day.
      */
     private static Score[] getScoresForDate(String date) {
-        ScoreboardWrapper res = getScoreboardForDate(date);
-        if (res != null) {
-            return res.getScoreboard().getGameScore();
+        ScoreboardWrapper scoreboardForDate = getScoreboardForDate(date);
+        if (scoreboardForDate != null) {
+            return scoreboardForDate.getScoreboard().getGameScore();
         } else {
             return null;
         }
@@ -188,6 +181,7 @@ public class SportsDataUtility {
                 put("Sat", 6);
             }
         };
+
         Calendar c = Calendar.getInstance();
         return DAYS_AS_INTEGERS.get(c.getTime().toString().substring(0, END_INDEX_FOR_DAY));
     }

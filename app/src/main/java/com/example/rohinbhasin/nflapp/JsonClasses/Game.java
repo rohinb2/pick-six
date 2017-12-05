@@ -19,6 +19,7 @@ public class Game implements Parcelable {
     private Team awayTeam;
     private Team homeTeam;
     private String location;
+    private String time;
 
     protected Game(Parcel in) {
         ID = in.readString();
@@ -31,6 +32,7 @@ public class Game implements Parcelable {
         awayTeam = in.readParcelable(Team.class.getClassLoader());
         homeTeam = in.readParcelable(Team.class.getClassLoader());
         location = in.readString();
+        time = in.readString();
     }
 
     public static final Creator<Game> CREATOR = new Creator<Game>() {
@@ -85,6 +87,10 @@ public class Game implements Parcelable {
         return location;
     }
 
+    public String getTime() {
+        return time;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -102,5 +108,6 @@ public class Game implements Parcelable {
         parcel.writeParcelable(awayTeam, i);
         parcel.writeParcelable(homeTeam, i);
         parcel.writeString(location);
+        parcel.writeString(time);
     }
 }

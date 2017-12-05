@@ -28,7 +28,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 // https://firebase.google.com/docs/auth/android/google-signin
 
 /**
- * Activity for signing in with Google
+ * Activity for signing in with Google on the homepage
  */
 public class SignInActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -121,11 +121,12 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
      */
     private void updateUI(@Nullable GoogleSignInAccount account) {
         if (account != null) {
-            statusTextView.setText(SIGNED_IN + account.getDisplayName());
             findViewById(R.id.sign_in_button).setVisibility(View.GONE);
+
             final Context context = getApplicationContext();
-            Intent clickedForDetail = new Intent(context, MainActivity.class);
-            context.startActivity(clickedForDetail);
+            Intent signedIn = new Intent(context, MainActivity.class);
+            context.startActivity(signedIn);
+
         } else {
             statusTextView.setText(SIGNED_OUT);
             findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
@@ -134,7 +135,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
     /**
      * Adds authenticated Firebase user to database with unique UID and other information.
-     * @param acct
+     * @param acct Account: The Google account to Sign in with.
      */
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
@@ -144,12 +145,8 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
                         } else {
-                            task.getException().printStackTrace();
-                            // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             Toast.makeText(SignInActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
