@@ -56,7 +56,7 @@ public class ScoreDisplayAdapter extends RecyclerView.Adapter {
         final String SCORE_DISPLAY = GAME_SCORE.getAwayScore() + " - " + GAME_SCORE.getHomeScore();
         final String FINAL_SCORE = "Final\n" + SCORE_DISPLAY;
         final String CURRENT_SCORE = "Current\n" + SCORE_DISPLAY;
-        final String DATE_DISPLAY = reformatDate(GAME.getDate()) + "\n" + GAME.getTime();
+        final String DATE_DISPLAY = FormattingUtilities.reformatDateForDisplay(GAME.getDate()) + "\n" + GAME.getTime();
 
         if (GAME_SCORE.getIsUnplayed().equals(TRUE)) {
             viewOfGame.statusView.setText(DATE_DISPLAY);
@@ -120,24 +120,5 @@ public class ScoreDisplayAdapter extends RecyclerView.Adapter {
             this.homeCityView = (TextView) scoreView.findViewById(R.id.home_team_city);
             this.homeImageView = (ImageView) scoreView.findViewById(R.id.home_team_logo);
         }
-    }
-
-    /**
-     * Takes in a date and changes format of String to one that is printable.
-     *
-     * @param date String: Date in format YYYY-MM-DD
-     * @return Reformatted String with day of week, month, and day as words.
-     */
-    private static String reformatDate(String date) {
-        String[] componentsOfDate = date.split("-");
-
-        final int YEAR = Integer.valueOf(componentsOfDate[0]);
-        final int MONTH = Integer.valueOf(componentsOfDate[1]);
-        final int DAY = Integer.valueOf(componentsOfDate[2]);
-        final int ARBITRARY_TIME = 1;
-        final int END_INDEX_FOR_DATE = 10;
-
-        Date dateToFormat = new Date(YEAR, MONTH, DAY, ARBITRARY_TIME, ARBITRARY_TIME, ARBITRARY_TIME);
-        return dateToFormat.toString().substring(0, END_INDEX_FOR_DATE);
     }
 }

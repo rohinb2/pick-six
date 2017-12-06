@@ -25,9 +25,6 @@ import java.util.HashMap;
  */
 public class SportsDataUtility {
 
-    private static final int END_INDEX_FOR_DATE = 8;
-    private static final int END_INDEX_FOR_DAY = 3;
-
     /**
      * Meat of the method for the class, gets scores for the week starting Thursday.
      *
@@ -35,7 +32,7 @@ public class SportsDataUtility {
      */
     public static ArrayList<Score> getScoresForCurrentWeek() {
         ArrayList<Score> fullWeekScores = new ArrayList<>();
-        final int DAY_OF_THE_WEEK = getCurrentDayOfWeek();
+        final int DAY_OF_THE_WEEK = FormattingUtilities.getCurrentDayOfWeek();
         Calendar dateToStartFrom = Calendar.getInstance();
 
         switch (DAY_OF_THE_WEEK) {
@@ -92,7 +89,7 @@ public class SportsDataUtility {
      */
     private static void addScoresFromDate(ArrayList<Score> scores, Calendar calendarDate) {
         Date d = calendarDate.getTime();
-        Score[] scoresForDate = getScoresForDate(getDateAsString(d));
+        Score[] scoresForDate = getScoresForDate(FormattingUtilities.getDateAsString(d));
 
         if (scoresForDate != null) {
             scores.addAll(Arrays.asList(scoresForDate));
@@ -151,38 +148,4 @@ public class SportsDataUtility {
         }
     }
 
-    /**
-     * Gets a Date as a String.
-     *
-     * @param dateToFormat Date object of any date.
-     * @return String: The date in format of a String YYYYMMDD.
-     */
-    private static String getDateAsString(Date dateToFormat) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
-        String formattedTime = dateFormat.format(dateToFormat);
-        return formattedTime.substring(0, END_INDEX_FOR_DATE);
-    }
-
-    /**
-     * Gets what day of the week it is (e.g. Mon, Tue, etc)
-     *
-     * @return int: an integer that represents what day of the week it is.
-     */
-    private static int getCurrentDayOfWeek() {
-
-        final HashMap<String, Integer> DAYS_AS_INTEGERS = new HashMap<String, Integer>() {
-            {
-                put("Sun", 0);
-                put("Mon", 1);
-                put("Tue", 2);
-                put("Wed", 3);
-                put("Thu", 4);
-                put("Fri", 5);
-                put("Sat", 6);
-            }
-        };
-
-        Calendar c = Calendar.getInstance();
-        return DAYS_AS_INTEGERS.get(c.getTime().toString().substring(0, END_INDEX_FOR_DAY));
-    }
 }
