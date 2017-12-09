@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 
 /**
@@ -15,6 +16,7 @@ import java.util.HashMap;
  */
 public class FormattingUtilities {
 
+    private static final int YEAR_OFFSET = 1900;
     private static final int END_INDEX_FOR_DATE_FORMAT = 8;
     private static final int END_INDEX_FOR_DATE_DISPLAY = 10;
     private static final int END_INDEX_FOR_DAY = 3;
@@ -63,12 +65,11 @@ public class FormattingUtilities {
     public static String reformatDateForDisplay(String date) {
         String[] componentsOfDate = date.split("-");
 
-        final int YEAR = Integer.valueOf(componentsOfDate[0]);
-        final int MONTH = Integer.valueOf(componentsOfDate[1]);
+        final int YEAR = Integer.valueOf(componentsOfDate[0]) - YEAR_OFFSET;
+        final int MONTH = Integer.valueOf(componentsOfDate[1]) - 1;
         final int DAY = Integer.valueOf(componentsOfDate[2]);
-        final int ARBITRARY_TIME = 1;
 
-        Date dateToFormat = new Date(YEAR, MONTH, DAY, ARBITRARY_TIME, ARBITRARY_TIME, ARBITRARY_TIME);
+        Date dateToFormat = new Date(YEAR, MONTH, DAY);
         return dateToFormat.toString().substring(0, END_INDEX_FOR_DATE_DISPLAY);
     }
 
@@ -84,12 +85,12 @@ public class FormattingUtilities {
 
         if (drawable instanceof BitmapDrawable) {
             BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
-            if(bitmapDrawable.getBitmap() != null) {
+            if (bitmapDrawable.getBitmap() != null) {
                 return bitmapDrawable.getBitmap();
             }
         }
 
-        if(drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
+        if (drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
             bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888); // Single color bitmap will be created of 1x1 pixel
         } else {
             bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
