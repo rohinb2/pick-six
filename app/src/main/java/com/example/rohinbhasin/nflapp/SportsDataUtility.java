@@ -2,6 +2,7 @@ package com.example.rohinbhasin.nflapp;
 
 import android.util.Base64;
 
+import com.example.rohinbhasin.nflapp.JsonClasses.AuthenticationKey;
 import com.example.rohinbhasin.nflapp.JsonClasses.GameStatsWrapper;
 import com.example.rohinbhasin.nflapp.JsonClasses.PlayerStats;
 import com.example.rohinbhasin.nflapp.JsonClasses.Score;
@@ -24,7 +25,7 @@ import java.util.HashMap;
  */
 public class SportsDataUtility {
 
-    private static final String AUTHENTICATION_STRING = "r_bhasin7:rohin";
+    private static final String AUTHENTICATION_STRING = AuthenticationKey.KEY;
     private static final String REQUEST_FOR_SCOREBOARD = "https://api.mysportsfeeds.com/v1.1/pull/nfl/2017-regular/scoreboard.json?fordate=";
     private static final String PLAYER_STATS_REQUEST = "https://api.mysportsfeeds.com/v1.1/pull/nfl/2017-regular/player_gamelogs.json?game=";
     private static final String QB_REQUEST = "&sort=stats.passing-yds.d&limit=2";
