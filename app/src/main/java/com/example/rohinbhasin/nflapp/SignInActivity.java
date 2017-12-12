@@ -36,7 +36,7 @@ import org.w3c.dom.Text;
  */
 public class SignInActivity extends AppCompatActivity implements View.OnClickListener {
 
-    public static final String TAG = "GOOGLE: ";
+    private static final String TAG = "GOOGLE: ";
     private static final String SERVER_ID = "181672608898-cqdb3cksd336ls4eonq6g3rjr8lvhf6a.apps.googleusercontent.com";
     private static final int RC_SIGN_IN = 9001;
 
@@ -137,6 +137,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
     /**
      * Adds authenticated Firebase user to database with unique UID and other information.
+     *
      * @param acct Account: The Google account to Sign in with.
      */
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {

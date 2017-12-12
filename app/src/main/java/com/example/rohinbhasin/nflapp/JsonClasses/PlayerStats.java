@@ -34,6 +34,11 @@ public class PlayerStats {
         this.team = team;
     }
 
+    /**
+     * Summarizes all the passing stats as a String
+     *
+     * @return String with the players name, completions, attempts, pass yards, and touchdowns
+     */
     public String getQBStatsAsString() {
 
         StringBuilder qbStats = new StringBuilder();
@@ -53,6 +58,11 @@ public class PlayerStats {
         return qbStats.toString();
     }
 
+    /**
+     * Summarizes all the rushing stats as a String
+     *
+     * @return String with the players name, rush attempts, rushing yards, and touchdowns
+     */
     public String getRBStatsAsString() {
 
         StringBuilder rbStats = new StringBuilder();
@@ -70,6 +80,11 @@ public class PlayerStats {
         return rbStats.toString();
     }
 
+    /**
+     * Summarizes all the receiving stats as a String
+     *
+     * @return String with the players name, receptions, receiving yards, and touchdowns
+     */
     public String getWRStatsAsString() {
 
         StringBuilder wrStats = new StringBuilder();

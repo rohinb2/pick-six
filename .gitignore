@@ -3,6 +3,7 @@
 /local.properties
 /.idea/workspace.xml
 /.idea/libraries
+/app/src/main/java/com/example/rohinbhasin/nflapp/JsonClasses/AuthenticationKey.java
 .DS_Store
 /build
 /captures

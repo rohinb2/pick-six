@@ -34,7 +34,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 /**
- *
+ * Activity that has the information about a game including score, stats, and voting functionality.
  */
 public class GameActivity extends AppCompatActivity {
 
@@ -55,9 +55,10 @@ public class GameActivity extends AppCompatActivity {
     private static final int LENGTH_OF_PERCENT = 4;
     private static final int TEXT_SIZE_NO_VOTES = 15;
     private static final int TEXT_SIZE_PERCENT = 25;
-    public static final int QB_STAT = 0;
-    public static final int RB_STAT = 1;
-    public static final int WR_STAT = 2;
+    private static final int QB_STAT = 0;
+    private static final int RB_STAT = 1;
+    private static final int WR_STAT = 2;
+    public static final String NO_STATS = "No Stats";
 
     private LinearLayout gameLayout;
     private TextView awayTeamView;
@@ -142,6 +143,7 @@ public class GameActivity extends AppCompatActivity {
         setColorsOfGameView();
         readValuesFromDatabase();
 
+        // Gets the String that can query at the player logs endpoint and get stats of players
         String gameIDQuery = FormattingUtilities.reformatInformationForGameRequest
                 (game.getDate(), awayTeam.getAbbreviation(), homeTeam.getAbbreviation());
 
@@ -197,6 +199,7 @@ public class GameActivity extends AppCompatActivity {
                 ROBOTO_BOLD_FILE_PATH);
         final String DATE_DISPLAY = FormattingUtilities.reformatDateForDisplay(game.getDate()) + "\n" + game.getTime();
 
+        // checks if the game hasn't been played, then it changes the status view of the score
         if (gameScore.getIsUnplayed().equals(TRUE)) {
             votingClosedView.setVisibility(View.INVISIBLE);
             gameStatusView.setText(DATE_DISPLAY);
@@ -283,6 +286,7 @@ public class GameActivity extends AppCompatActivity {
     private void readValuesFromDatabase() {
         currentGameReference = database.getReference(GAMES_DB_REFERENCE).child(game.getID());
         currentGameReference.addValueEventListener(new ValueEventListener() {
+
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 votesForCurrentGame = dataSnapshot.getValue(GameVotes.class);
@@ -294,6 +298,7 @@ public class GameActivity extends AppCompatActivity {
                     homeTeamVotePercentage.setText(NO_VOTES);
                     votePercentageBar.setVisibility(View.INVISIBLE);
 
+                // otherwise get the number of votes for each team and change the views accordingly
                 } else {
                     int numAwayTeamVotes = votesForCurrentGame.getNumAwayTeamVotes();
                     int numHomeTeamVotes = votesForCurrentGame.getNumHomeTeamVotes();
@@ -385,6 +390,9 @@ public class GameActivity extends AppCompatActivity {
      * @param qbStats List of stats that you can retrieve for a player.
      */
     private void setQBViews(PlayerStats[] qbStats) {
+
+        // Checks if each stat in the provided stats corresponds to the home or away team and sets
+        // views accordingly
         for (PlayerStats playerStats : qbStats) {
             if (playerStats.getTeam().getName().equals(awayTeam.getName())) {
                 awayQBStatsView.setText(playerStats.getQBStatsAsString());
@@ -400,13 +408,17 @@ public class GameActivity extends AppCompatActivity {
      * @param rbStats List of stats that you can retrieve for a player.
      */
     private void setRBViews(PlayerStats[] rbStats) {
+
+        // Checks if each stat in the provided stats corresponds to the home or away team and sets
+        // views accordingly, only populates with the top stats and doesn't populate if the view
+        // has already been set
         for (PlayerStats playerStats : rbStats) {
             if (playerStats.getTeam().getName().equals(awayTeam.getName())) {
-                if (awayRBStatsView.getText().length() == 0) {
+                if (awayRBStatsView.getText().length() == 0 || awayRBStatsView.getText().equals(NO_STATS)) {
                     awayRBStatsView.setText(playerStats.getRBStatsAsString());
                 }
             } else {
-                if (homeRBStatsView.getText().length() == 0) {
+                if (homeRBStatsView.getText().length() == 0 || homeRBStatsView.getText().equals(NO_STATS)) {
                     homeRBStatsView.setText(playerStats.getRBStatsAsString());
                 }
             }
@@ -419,15 +431,19 @@ public class GameActivity extends AppCompatActivity {
      * @param wrStats List of stats that you can retrieve for a player.
      */
     private void setWRViews(PlayerStats[] wrStats) {
+
+        // Checks if each stat in the provided stats corresponds to the home or away team and sets
+        // views accordingly, only populates with the top stats and doesn't populate if the view
+        // has already been set
         for (PlayerStats playerStats : wrStats) {
             if (playerStats.getTeam().getName().equals(awayTeam.getName())) {
-                if (awayWRStatsView1.getText().length() == 0) {
+                if (awayWRStatsView1.getText().length() == 0 || awayWRStatsView1.getText().equals(NO_STATS)) {
                     awayWRStatsView1.setText(playerStats.getWRStatsAsString());
                 } else if (awayWRStatsView2.getText().length() == 0) {
                     awayWRStatsView2.setText(playerStats.getWRStatsAsString());
                 }
             } else {
-                if (homeWRStatsView1.getText().length() == 0) {
+                if (homeWRStatsView1.getText().length() == 0 || homeWRStatsView1.getText().equals(NO_STATS)) {
                     homeWRStatsView1.setText(playerStats.getWRStatsAsString());
                 } else if (homeWRStatsView2.getText().length() == 0) {
                     homeWRStatsView2.setText(playerStats.getWRStatsAsString());

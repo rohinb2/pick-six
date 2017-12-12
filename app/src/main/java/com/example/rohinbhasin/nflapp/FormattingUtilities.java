@@ -64,8 +64,9 @@ public class FormattingUtilities {
      * @return Reformatted String with day of week, month, and day as words.
      */
     public static String reformatDateForDisplay(String date) {
-        String[] componentsOfDate = date.split("-");
+        String[] componentsOfDate = date.split(DASH);
 
+        // Offset the String dates into fields that can construct a Date object
         final int YEAR = Integer.valueOf(componentsOfDate[0]) - YEAR_OFFSET;
         final int MONTH = Integer.valueOf(componentsOfDate[1]) - 1;
         final int DAY = Integer.valueOf(componentsOfDate[2]);
@@ -91,8 +92,9 @@ public class FormattingUtilities {
             }
         }
 
+        // Single color bitmap will be created of 1x1 pixel
         if (drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
-            bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888); // Single color bitmap will be created of 1x1 pixel
+            bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
         } else {
             bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
         }

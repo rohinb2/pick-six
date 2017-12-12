@@ -21,6 +21,9 @@ import org.w3c.dom.Text;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Activity with the Recycler Views of all the games.
+ */
 public class MainActivity extends AppCompatActivity {
 
     private RecyclerView nflScoresListView;
@@ -57,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
         final Context context = getApplicationContext();
         Intent backToSignInActivity = new Intent(context, SignInActivity.class);
         backToSignInActivity.putExtra("launchedFromMain", 1);
+
+        // start the sign in activity again and finish this activity so the user cannot return unauthenticated
         startActivity(backToSignInActivity);
         finish();
     }
