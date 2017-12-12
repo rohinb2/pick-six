@@ -13,10 +13,10 @@
         style="@style/CardView.Light"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="4dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp">
+        android:layout_marginTop="4dp">
 
         <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -89,7 +89,7 @@
                 android:gravity="left"
                 android:text="10"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:textSize="40sp"
+                android:textSize="30sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/away_team_name_detail" />
 
@@ -102,7 +102,7 @@
                 android:gravity="right"
                 android:text="12"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:textSize="40sp"
+                android:textSize="30sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/home_team_name_detail" />
 
@@ -126,10 +126,10 @@
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="4dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp">
+        android:layout_marginTop="4dp">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
@@ -137,78 +137,164 @@
             >
 
             <TextView
-                android:id="@+id/textView7"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_marginStart="44dp"
-                android:layout_marginTop="16dp"
-                android:text="Stats for Away"
+                android:id="@+id/away_qb_stats"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:gravity="left"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@+id/qb_title" />
 
             <TextView
-                android:id="@+id/textView8"
-                android:layout_width="wrap_content"
-                android:layout_height="19dp"
-                android:layout_marginEnd="44dp"
-                android:layout_marginTop="16dp"
+                android:id="@+id/home_qb_stats"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
                 android:gravity="right"
-                android:text="Stats for Home"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/qb_title" />
+
+            <TextView
+                android:id="@+id/title_stats"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="Game Statistics"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:textSize="17dp"
+                android:gravity="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/textView9"
+                android:id="@+id/qb_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="44dp"
-                android:layout_marginTop="8dp"
-                android:text="TextView"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView7" />
-
-            <TextView
-                android:id="@+id/textView10"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="44dp"
-                android:layout_marginTop="4dp"
-                android:text="TextView"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:text="Passing Stats"
+                android:gravity="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView8" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title_stats" />
 
             <TextView
-                android:id="@+id/textView11"
+                android:id="@+id/rb_title"
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:text="Rushing Stats"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.501"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/home_qb_stats" />
+
+            <TextView
+                android:id="@+id/away_rb_stats"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:gravity="left"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/rb_title" />
+
+            <TextView
+                android:id="@+id/home_rb_stats"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
+                android:gravity="right"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/rb_title" />
+
+            <TextView
+                android:id="@+id/wr_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:text="Receiving Stats"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.501"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/away_rb_stats" />
+
+            <TextView
+                android:id="@+id/away_wr_stats"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:gravity="left"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/wr_title" />
+
+            <TextView
+                android:id="@+id/home_wr_stats"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
+                android:gravity="right"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/wr_title" />
+
+            <TextView
+                android:id="@+id/away_wr_stats2"
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:layout_marginStart="44dp"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:text="TextView"
+                android:gravity="left"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView9" />
+                app:layout_constraintTop_toBottomOf="@+id/away_wr_stats" />
 
             <TextView
-                android:id="@+id/textView12"
-                android:layout_width="wrap_content"
+                android:id="@+id/home_wr_stats2"
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:layout_marginEnd="44dp"
-                android:text="TextView"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
+                android:gravity="right"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView10" />
+                app:layout_constraintTop_toBottomOf="@+id/home_wr_stats" />
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="4dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp">
+        android:layout_marginTop="4dp">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
@@ -217,67 +303,102 @@
             <ProgressBar
                 android:id="@+id/vote_percentage_bar"
                 style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="273dp"
-                android:layout_height="51dp"
+                android:layout_width="276dp"
+                android:layout_height="20dp"
                 android:layout_marginBottom="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="36dp"
+                android:layout_marginTop="8dp"
                 android:progress="40"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.506"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/home_team_percentage"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintVertical_bias="1.0" />
 
             <TextView
                 android:id="@+id/away_team_percentage"
-                android:layout_width="wrap_content"
+                android:layout_width="75dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="72dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginStart="40dp"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
                 android:text="40%"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:textSize="20sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/vote_for_away_button" />
 
             <TextView
                 android:id="@+id/home_team_percentage"
-                android:layout_width="wrap_content"
+                android:layout_width="75dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="72dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginEnd="40dp"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
                 android:text="60%"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:textSize="20sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/vote_for_home_button" />
 
             <Button
                 android:id="@+id/vote_for_away_button"
-                android:layout_width="wrap_content"
+                android:layout_width="75dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="40dp"
-                android:layout_marginTop="16dp"
+                android:elevation="2dp"
                 android:onClick="changeVoteForAwayTeam"
                 android:text=""
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                 android:textColor="@color/cardview_light_background"
-                android:minWidth="88dp"
-                android:elevation="2dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@+id/title_votes" />
 
             <Button
                 android:id="@+id/vote_for_home_button"
-                android:layout_width="wrap_content"
+                android:layout_width="75dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="44dp"
-                android:layout_marginTop="16dp"
-                android:text=""
-                android:textColor="@color/cardview_light_background"
-                android:minWidth="88dp"
+                android:layout_marginEnd="40dp"
                 android:elevation="2dp"
                 android:onClick="changeVoteForHomeTeam"
+                android:text=""
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:textColor="@color/cardview_light_background"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title_votes" />
+
+            <TextView
+                android:id="@+id/title_votes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="User Votes"
+                android:textSize="17dp"
+                android:gravity="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/no_votes_display"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="Game has already started, can't vote anymore!"
+                android:gravity="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                app:layout_constraintBottom_toBottomOf="@+id/vote_for_home_button"
+                app:layout_constraintEnd_toStartOf="@+id/vote_for_home_button"
+                app:layout_constraintStart_toEndOf="@+id/vote_for_away_button"
+                app:layout_constraintTop_toBottomOf="@+id/title_votes" />
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
 

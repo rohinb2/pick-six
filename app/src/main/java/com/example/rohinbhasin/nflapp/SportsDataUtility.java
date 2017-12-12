@@ -1,9 +1,9 @@
 package com.example.rohinbhasin.nflapp;
 
-import android.nfc.Tag;
 import android.util.Base64;
-import android.util.Log;
 
+import com.example.rohinbhasin.nflapp.JsonClasses.GameStatsWrapper;
+import com.example.rohinbhasin.nflapp.JsonClasses.PlayerStats;
 import com.example.rohinbhasin.nflapp.JsonClasses.Score;
 import com.example.rohinbhasin.nflapp.JsonClasses.ScoreboardWrapper;
 import com.google.gson.Gson;
@@ -13,7 +13,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -24,6 +23,16 @@ import java.util.HashMap;
  * A class for getting data for Scores for a the NFL app.
  */
 public class SportsDataUtility {
+
+    private static final String AUTHENTICATION_STRING = "r_bhasin7:rohin";
+    private static final String REQUEST_FOR_SCOREBOARD = "https://api.mysportsfeeds.com/v1.1/pull/nfl/2017-regular/scoreboard.json?fordate=";
+    private static final String PLAYER_STATS_REQUEST = "https://api.mysportsfeeds.com/v1.1/pull/nfl/2017-regular/player_gamelogs.json?game=";
+    private static final String QB_REQUEST = "&sort=stats.passing-yds.d&limit=2";
+    private static final String RB_REQUEST = "&sort=stats.rushing-yds.d&limit=10";
+    private static final String WR_REQUEST = "&sort=stats.receiving-yds.d&limit=10";
+    public static final int QB_STAT = 0;
+    public static final int RB_STAT = 1;
+    public static final int WR_STAT = 2;
 
     /**
      * Meat of the method for the class, gets scores for the week starting Thursday.
@@ -104,12 +113,9 @@ public class SportsDataUtility {
      */
     private static ScoreboardWrapper getScoreboardForDate(String dateForScores) {
 
-        final String AUTHENTICATION_STRING = "r_bhasin7:rohin";
-        String urlString = "https://api.mysportsfeeds.com/v1.1/pull/nfl/2017-regular/scoreboard.json?fordate=" + dateForScores;
+        String urlString = REQUEST_FOR_SCOREBOARD + dateForScores;
 
-        // connect to the URL using URLConnection
         try {
-
             URL url = new URL(urlString);
             byte[] data = AUTHENTICATION_STRING.getBytes("UTF-8");
             String encoding = Base64.encodeToString(data, Base64.DEFAULT).replace("\n", "");
@@ -123,7 +129,6 @@ public class SportsDataUtility {
 
             Gson gson = new Gson();
             ScoreboardWrapper score = gson.fromJson(inStreamReader, ScoreboardWrapper.class);
-            Log.d("RETURNING SCORE", score.getScoreboard().getLastUpdatedOn());
             return score;
 
         } catch (IOException e) {
@@ -148,4 +153,62 @@ public class SportsDataUtility {
         }
     }
 
+    /**
+     * Gets the stats for players in a specific game in a specific position.
+     *
+     * @param formattedGameID A game identification String formatted as YYYYMMDD-HOME-AWAY
+     * @param playerPosition An integer suggesting which stats are needed, 0 for QB, 1 for RB, 2 for WR.
+     * @return An array of player stats for that game.
+     */
+    private static PlayerStats[] getPositionStats(String formattedGameID, int playerPosition) {
+
+        String urlString = PLAYER_STATS_REQUEST + formattedGameID;
+
+        if (playerPosition == 0) {
+            urlString += QB_REQUEST;
+        } else if (playerPosition == 1) {
+            urlString += RB_REQUEST;
+        } else if (playerPosition == 2) {
+            urlString += WR_REQUEST;
+        }
+
+        try {
+            URL url = new URL(urlString);
+            byte[] data = AUTHENTICATION_STRING.getBytes("UTF-8");
+            String encoding = Base64.encodeToString(data, Base64.DEFAULT).replace("\n", "");
+
+            URLConnection connection = url.openConnection();
+            connection.setRequestProperty("Authorization", "Basic " + encoding);
+            connection.connect();
+
+            InputStream inStream = connection.getInputStream();
+            InputStreamReader inStreamReader = new InputStreamReader(inStream, Charset.forName("UTF-8"));
+
+            Gson gson = new Gson();
+            GameStatsWrapper gameStatsWrapper = gson.fromJson(inStreamReader, GameStatsWrapper.class);
+
+            return gameStatsWrapper.getPlayergamelogs().getGamelogs();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    /**
+     * Gets the player stats for passing, rushing, and receiving as a 2D array.
+     *
+     * @param formattedGameID A game identification String formatted as YYYYMMDD-HOME-AWAY
+     * @return a 2D array of all player stats for the game.
+     */
+    public static PlayerStats[][] getPlayerStats(String formattedGameID) {
+        PlayerStats[][] allPositionStats = new PlayerStats[3][];
+
+        allPositionStats[QB_STAT] = getPositionStats(formattedGameID, QB_STAT);
+        allPositionStats[RB_STAT] = getPositionStats(formattedGameID, RB_STAT);
+        allPositionStats[WR_STAT] = getPositionStats(formattedGameID, WR_STAT);
+
+        return allPositionStats;
+    }
 }

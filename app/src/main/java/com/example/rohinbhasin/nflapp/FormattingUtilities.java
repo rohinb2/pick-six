@@ -20,6 +20,7 @@ public class FormattingUtilities {
     private static final int END_INDEX_FOR_DATE_FORMAT = 8;
     private static final int END_INDEX_FOR_DATE_DISPLAY = 10;
     private static final int END_INDEX_FOR_DAY = 3;
+    private static final String DASH = "-";
 
     /**
      * Gets a Date as a String.
@@ -73,9 +74,9 @@ public class FormattingUtilities {
         return dateToFormat.toString().substring(0, END_INDEX_FOR_DATE_DISPLAY);
     }
 
-    // Code from StackOverflow: https://stackoverflow.com/questions/3035692/how-to-convert-a-drawable-to-a-bitmap
     /**
      * Method to change a Drawable object into a Bitmap object.
+     * Code from StackOverflow: https://stackoverflow.com/questions/3035692/how-to-convert-a-drawable-to-a-bitmap
      *
      * @param drawable a Drawable image
      * @return Bitmap: the Bitmap of the corresponding Drawable image.
@@ -102,4 +103,25 @@ public class FormattingUtilities {
         return bitmap;
     }
 
+    /**
+     * Certain API Requests require a request in game formatted as YYYYMMDD-HOME-AWAY, this method
+     * formatts Strings into that format.
+     *
+     * @param date String in form YYYY-MM-DD
+     * @param abbreviationAwayTeam Abbreviation of away team name
+     * @param abbreviationHomeTeam Abbreviation of home team name
+     * @return reformatted String
+     */
+    public static String reformatInformationForGameRequest(
+            String date, String abbreviationAwayTeam, String abbreviationHomeTeam) {
+
+        StringBuilder reformattedString = new StringBuilder();
+        reformattedString.append(date.replace(DASH, ""));
+        reformattedString.append(DASH);
+        reformattedString.append(abbreviationAwayTeam);
+        reformattedString.append(DASH);
+        reformattedString.append(abbreviationHomeTeam);
+
+        return reformattedString.toString();
+    }
 }

@@ -1,10 +1,10 @@
 package com.example.rohinbhasin.nflapp;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.example.rohinbhasin.nflapp.JsonClasses.Game;
 import com.example.rohinbhasin.nflapp.JsonClasses.GameVotes;
+import com.example.rohinbhasin.nflapp.JsonClasses.PlayerStats;
 import com.example.rohinbhasin.nflapp.JsonClasses.Score;
 import com.example.rohinbhasin.nflapp.JsonClasses.Team;
 import com.example.rohinbhasin.nflapp.JsonClasses.User;
@@ -32,20 +33,31 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+/**
+ *
+ */
 public class GameActivity extends AppCompatActivity {
 
-    public static final String UNVOTE = "Unvote";
-    public static final String VOTE = "Vote";
+    private static final String UNVOTE = "Unvote";
+    private static final String VOTE = "Vote";
     private static final String IN_PROGRESS = "In Progress";
     private static final String TRUE = "true";
+    private static final String FALSE = "false";
     private static final String FINAL_SCORE = "Final";
     private static final String ROBOTO_BOLD_FILE_PATH = "fonts/Roboto_Condensed/RobotoCondensed-Bold.ttf";
     private static final String ROBOTO_LIGHT_FILE_PATH = "fonts/Roboto/Roboto-Light.ttf";
     private static final String ROBOTO_CONDENSED_FILE_PATH = "fonts/Roboto_Condensed/RobotoCondensed-Light.ttf";
     private static final String GAMES_DB_REFERENCE = "games";
     private static final String SCORE_INTENT_REFERENCE = "score";
-    public static final int TOTAL_PERCENT = 100;
-    public static final String PERCENT_SYMBOL = "%";
+    private static final String PERCENT_SYMBOL = "%";
+    private static final String NO_VOTES = "No Votes";
+    private static final int TOTAL_PERCENT = 100;
+    private static final int LENGTH_OF_PERCENT = 4;
+    private static final int TEXT_SIZE_NO_VOTES = 15;
+    private static final int TEXT_SIZE_PERCENT = 25;
+    public static final int QB_STAT = 0;
+    public static final int RB_STAT = 1;
+    public static final int WR_STAT = 2;
 
     private LinearLayout gameLayout;
     private TextView awayTeamView;
@@ -55,10 +67,21 @@ public class GameActivity extends AppCompatActivity {
     private TextView homeScoreView;
     private ImageView homeImageView;
     private TextView gameStatusView;
+
+    private TextView awayQBStatsView;
+    private TextView homeQBStatsView;
+    private TextView awayRBStatsView;
+    private TextView homeRBStatsView;
+    private TextView awayWRStatsView1;
+    private TextView awayWRStatsView2;
+    private TextView homeWRStatsView1;
+    private TextView homeWRStatsView2;
+
     private Button awayVoteButton;
     private Button homeVoteButton;
     private TextView awayTeamVotePercentage;
     private TextView homeTeamVotePercentage;
+    private TextView votingClosedView;
     private ProgressBar votePercentageBar;
 
     private FirebaseDatabase database;
@@ -86,10 +109,21 @@ public class GameActivity extends AppCompatActivity {
         homeScoreView = (TextView) findViewById(R.id.home_score);
         homeImageView = (ImageView) findViewById(R.id.home_team_logo_detail);
         gameStatusView = (TextView) findViewById(R.id.game_status);
+
+        awayQBStatsView = (TextView) findViewById(R.id.away_qb_stats);
+        homeQBStatsView = (TextView) findViewById(R.id.home_qb_stats);
+        awayRBStatsView = (TextView) findViewById(R.id.away_rb_stats);
+        homeRBStatsView = (TextView) findViewById(R.id.home_rb_stats);
+        awayWRStatsView1 = (TextView) findViewById(R.id.away_wr_stats);
+        awayWRStatsView2 = (TextView) findViewById(R.id.away_wr_stats2);
+        homeWRStatsView1 = (TextView) findViewById(R.id.home_wr_stats);
+        homeWRStatsView2 = (TextView) findViewById(R.id.home_wr_stats2);
+
         awayVoteButton = (Button) findViewById(R.id.vote_for_away_button);
         homeVoteButton = (Button) findViewById(R.id.vote_for_home_button);
         awayTeamVotePercentage = (TextView) findViewById(R.id.away_team_percentage);
         homeTeamVotePercentage = (TextView) findViewById(R.id.home_team_percentage);
+        votingClosedView = (TextView) findViewById(R.id.no_votes_display);
         votePercentageBar = (ProgressBar) findViewById(R.id.vote_percentage_bar);
 
         database = FirebaseDatabase.getInstance();
@@ -107,6 +141,11 @@ public class GameActivity extends AppCompatActivity {
         setViewBasedOnGameStatus();
         setColorsOfGameView();
         readValuesFromDatabase();
+
+        String gameIDQuery = FormattingUtilities.reformatInformationForGameRequest
+                (game.getDate(), awayTeam.getAbbreviation(), homeTeam.getAbbreviation());
+
+        new PlayerStatsAsyncTask().execute(gameIDQuery);
     }
 
     /**
@@ -159,6 +198,7 @@ public class GameActivity extends AppCompatActivity {
         final String DATE_DISPLAY = FormattingUtilities.reformatDateForDisplay(game.getDate()) + "\n" + game.getTime();
 
         if (gameScore.getIsUnplayed().equals(TRUE)) {
+            votingClosedView.setVisibility(View.INVISIBLE);
             gameStatusView.setText(DATE_DISPLAY);
         } else if (gameScore.getIsInProgress().equals(TRUE)) {
             gameStatusView.setText(IN_PROGRESS);
@@ -202,6 +242,7 @@ public class GameActivity extends AppCompatActivity {
                 window.setNavigationBarColor(secondColor);
                 awayVoteButton.setBackgroundColor(secondColor);
                 homeVoteButton.setBackgroundColor(secondColor);
+                votePercentageBar.getProgressDrawable().setColorFilter(secondColor,android.graphics.PorterDuff.Mode.MULTIPLY);
             }
         });
     }
@@ -249,26 +290,15 @@ public class GameActivity extends AppCompatActivity {
                 // if there are no votes yet, set the buttons and make a new GameVotes object
                 if (votesForCurrentGame == null) {
                     currentGameReference.setValue(new GameVotes());
-                    awayTeamVotePercentage.setText("0");
-                    homeTeamVotePercentage.setText("0");
+                    awayTeamVotePercentage.setText(NO_VOTES);
+                    homeTeamVotePercentage.setText(NO_VOTES);
+                    votePercentageBar.setVisibility(View.INVISIBLE);
 
-                    // Set the percentage of the views and the progress bar based on the percentage
-                    // of votes for away team vs the home team.
                 } else {
                     int numAwayTeamVotes = votesForCurrentGame.getNumAwayTeamVotes();
                     int numHomeTeamVotes = votesForCurrentGame.getNumHomeTeamVotes();
-
-                    int percentageOfAwayTeamVotes = (int) (((double) numAwayTeamVotes * 100)
-                            / (numAwayTeamVotes + numHomeTeamVotes));
-
-                    awayTeamVotePercentage.setText(String.valueOf
-                            (percentageOfAwayTeamVotes) + PERCENT_SYMBOL);
-                    homeTeamVotePercentage.setText(String.valueOf
-                            (TOTAL_PERCENT - percentageOfAwayTeamVotes) + PERCENT_SYMBOL);
-
-                    votePercentageBar.setProgress(percentageOfAwayTeamVotes);
+                    changeViewsBasedOnVotes(numAwayTeamVotes, numHomeTeamVotes);
                 }
-
                 changeButtonsText();
             }
 
@@ -280,23 +310,147 @@ public class GameActivity extends AppCompatActivity {
     }
 
     /**
+     * Change the Views based on how many votes there are for each team.
+     * @param numAwayTeamVotes int: The number of votes for the away team
+     * @param numHomeTeamVotes int: The number of votes for the home team
+     */
+    private void changeViewsBasedOnVotes(int numAwayTeamVotes, int numHomeTeamVotes) {
+
+        if (numAwayTeamVotes == 0 && numHomeTeamVotes == 0) {
+            awayTeamVotePercentage.setText(NO_VOTES);
+            homeTeamVotePercentage.setText(NO_VOTES);
+            votePercentageBar.setVisibility(View.INVISIBLE);
+
+        } else {
+            int percentageOfAwayTeamVotes = (int) (((double) numAwayTeamVotes * 100)
+                    / (numAwayTeamVotes + numHomeTeamVotes));
+
+            final String AWAY_TEAM_PERCENTAGE = String.valueOf(
+                    percentageOfAwayTeamVotes) + PERCENT_SYMBOL;
+            final String HOME_TEAM_PERCENTAGE = String.valueOf(
+                    TOTAL_PERCENT - percentageOfAwayTeamVotes) + PERCENT_SYMBOL;
+
+            awayTeamVotePercentage.setText(AWAY_TEAM_PERCENTAGE);
+            homeTeamVotePercentage.setText(HOME_TEAM_PERCENTAGE);
+            votePercentageBar.setVisibility(View.VISIBLE);
+            votePercentageBar.setProgress(percentageOfAwayTeamVotes);
+        }
+    }
+
+    /**
      * Adjusts the text of the buttons based on whether or not the user has voted yet.
      */
     private void changeButtonsText() {
-        if (votesForCurrentGame.hasVotedForAwayTeam(currentUser)) {
+
+        awayTeamVotePercentage.setTextSize(TEXT_SIZE_PERCENT);
+        homeTeamVotePercentage.setTextSize(TEXT_SIZE_PERCENT);
+
+        if (gameScore.getIsUnplayed().equals(FALSE)) {
+            awayVoteButton.setClickable(false);
+            homeVoteButton.setClickable(false);
+            awayVoteButton.setVisibility(View.INVISIBLE);
+            homeVoteButton.setVisibility(View.INVISIBLE);
+
+        } else if (votesForCurrentGame.hasVotedForAwayTeam(currentUser)) {
             awayVoteButton.setText(UNVOTE);
             homeVoteButton.setVisibility(View.INVISIBLE);
+            homeVoteButton.setClickable(false);
             userHasVoted = true;
+
         } else if (votesForCurrentGame.hasVotedForHomeTeam(currentUser)) {
             homeVoteButton.setText(UNVOTE);
             awayVoteButton.setVisibility(View.INVISIBLE);
+            awayVoteButton.setClickable(false);
             userHasVoted = true;
+
         } else {
             awayVoteButton.setVisibility(View.VISIBLE);
             homeVoteButton.setVisibility(View.VISIBLE);
+            awayVoteButton.setClickable(true);
+            homeVoteButton.setClickable(true);
             awayVoteButton.setText(VOTE);
             homeVoteButton.setText(VOTE);
             userHasVoted = false;
+        }
+
+        if (awayTeamVotePercentage.getText().length() > LENGTH_OF_PERCENT) {
+            awayTeamVotePercentage.setTextSize(TEXT_SIZE_NO_VOTES);
+            homeTeamVotePercentage.setTextSize(TEXT_SIZE_NO_VOTES);
+        }
+    }
+
+    /**
+     * Sets the Views that show the stats for a Quarterback.
+     *
+     * @param qbStats List of stats that you can retrieve for a player.
+     */
+    private void setQBViews(PlayerStats[] qbStats) {
+        for (PlayerStats playerStats : qbStats) {
+            if (playerStats.getTeam().getName().equals(awayTeam.getName())) {
+                awayQBStatsView.setText(playerStats.getQBStatsAsString());
+            } else {
+                homeQBStatsView.setText(playerStats.getQBStatsAsString());
+            }
+        }
+    }
+
+    /**
+     * Sets the Views that show the stats for a Runningback.
+     *
+     * @param rbStats List of stats that you can retrieve for a player.
+     */
+    private void setRBViews(PlayerStats[] rbStats) {
+        for (PlayerStats playerStats : rbStats) {
+            if (playerStats.getTeam().getName().equals(awayTeam.getName())) {
+                if (awayRBStatsView.getText().length() == 0) {
+                    awayRBStatsView.setText(playerStats.getRBStatsAsString());
+                }
+            } else {
+                if (homeRBStatsView.getText().length() == 0) {
+                    homeRBStatsView.setText(playerStats.getRBStatsAsString());
+                }
+            }
+        }
+    }
+
+    /**
+     * Sets the Views that show the stats for the receivers.
+     *
+     * @param wrStats List of stats that you can retrieve for a player.
+     */
+    private void setWRViews(PlayerStats[] wrStats) {
+        for (PlayerStats playerStats : wrStats) {
+            if (playerStats.getTeam().getName().equals(awayTeam.getName())) {
+                if (awayWRStatsView1.getText().length() == 0) {
+                    awayWRStatsView1.setText(playerStats.getWRStatsAsString());
+                } else if (awayWRStatsView2.getText().length() == 0) {
+                    awayWRStatsView2.setText(playerStats.getWRStatsAsString());
+                }
+            } else {
+                if (homeWRStatsView1.getText().length() == 0) {
+                    homeWRStatsView1.setText(playerStats.getWRStatsAsString());
+                } else if (homeWRStatsView2.getText().length() == 0) {
+                    homeWRStatsView2.setText(playerStats.getWRStatsAsString());
+                }
+            }
+        }
+    }
+
+    /**
+     * Asynchronous Task for getting stats about Quarterbacks, Runningbacks, and Recievers for display.
+     */
+    public class PlayerStatsAsyncTask extends AsyncTask<String, String, PlayerStats[][]> {
+
+        @Override
+        protected void onPostExecute(PlayerStats[][] playerStats) {
+            setQBViews(playerStats[QB_STAT]);
+            setRBViews(playerStats[RB_STAT]);
+            setWRViews(playerStats[WR_STAT]);
+        }
+
+        @Override
+        protected PlayerStats[][] doInBackground(String... formattedGameID) {
+            return SportsDataUtility.getPlayerStats(formattedGameID[0]);
         }
     }
 }
