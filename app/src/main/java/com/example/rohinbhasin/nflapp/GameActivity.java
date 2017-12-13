@@ -51,6 +51,7 @@ public class GameActivity extends AppCompatActivity {
     private static final String SCORE_INTENT_REFERENCE = "score";
     private static final String PERCENT_SYMBOL = "%";
     private static final String NO_VOTES = "No Votes";
+    private static final String NO_STATS = "No Stats";
     private static final int TOTAL_PERCENT = 100;
     private static final int LENGTH_OF_PERCENT = 4;
     private static final int TEXT_SIZE_NO_VOTES = 15;
@@ -58,7 +59,6 @@ public class GameActivity extends AppCompatActivity {
     private static final int QB_STAT = 0;
     private static final int RB_STAT = 1;
     private static final int WR_STAT = 2;
-    public static final String NO_STATS = "No Stats";
 
     private LinearLayout gameLayout;
     private TextView awayTeamView;
