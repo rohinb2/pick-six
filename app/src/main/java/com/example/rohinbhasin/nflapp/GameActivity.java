@@ -416,6 +416,9 @@ public class GameActivity extends AppCompatActivity {
         // has already been set
         if (rbStats != null) {
             for (PlayerStats playerStats : rbStats) {
+                if (playerStats == null) {
+                    continue;
+                }
                 if (playerStats.getTeam().getName().equals(awayTeam.getName())) {
                     if (awayRBStatsView.getText().length() == 0 || awayRBStatsView.getText().equals(NO_STATS)) {
                         awayRBStatsView.setText(playerStats.getRBStatsAsString());
@@ -441,6 +444,9 @@ public class GameActivity extends AppCompatActivity {
         // has already been set
         if (wrStats != null) {
             for (PlayerStats playerStats : wrStats) {
+                if (playerStats == null) {
+                    continue;
+                }
                 if (playerStats.getTeam().getName().equals(awayTeam.getName())) {
                     if (awayWRStatsView1.getText().length() == 0 || awayWRStatsView1.getText().equals(NO_STATS)) {
                         awayWRStatsView1.setText(playerStats.getWRStatsAsString());
