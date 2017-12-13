@@ -303,8 +303,8 @@ public class GameActivity extends AppCompatActivity {
                     int numAwayTeamVotes = votesForCurrentGame.getNumAwayTeamVotes();
                     int numHomeTeamVotes = votesForCurrentGame.getNumHomeTeamVotes();
                     changeViewsBasedOnVotes(numAwayTeamVotes, numHomeTeamVotes);
+                    changeButtonsText();
                 }
-                changeButtonsText();
             }
 
             @Override
@@ -393,11 +393,13 @@ public class GameActivity extends AppCompatActivity {
 
         // Checks if each stat in the provided stats corresponds to the home or away team and sets
         // views accordingly
-        for (PlayerStats playerStats : qbStats) {
-            if (playerStats.getTeam().getName().equals(awayTeam.getName())) {
-                awayQBStatsView.setText(playerStats.getQBStatsAsString());
-            } else {
-                homeQBStatsView.setText(playerStats.getQBStatsAsString());
+        if (qbStats != null) {
+            for (PlayerStats playerStats : qbStats) {
+                if (playerStats.getTeam().getName().equals(awayTeam.getName())) {
+                    awayQBStatsView.setText(playerStats.getQBStatsAsString());
+                } else {
+                    homeQBStatsView.setText(playerStats.getQBStatsAsString());
+                }
             }
         }
     }
@@ -412,14 +414,16 @@ public class GameActivity extends AppCompatActivity {
         // Checks if each stat in the provided stats corresponds to the home or away team and sets
         // views accordingly, only populates with the top stats and doesn't populate if the view
         // has already been set
-        for (PlayerStats playerStats : rbStats) {
-            if (playerStats.getTeam().getName().equals(awayTeam.getName())) {
-                if (awayRBStatsView.getText().length() == 0 || awayRBStatsView.getText().equals(NO_STATS)) {
-                    awayRBStatsView.setText(playerStats.getRBStatsAsString());
-                }
-            } else {
-                if (homeRBStatsView.getText().length() == 0 || homeRBStatsView.getText().equals(NO_STATS)) {
-                    homeRBStatsView.setText(playerStats.getRBStatsAsString());
+        if (rbStats != null) {
+            for (PlayerStats playerStats : rbStats) {
+                if (playerStats.getTeam().getName().equals(awayTeam.getName())) {
+                    if (awayRBStatsView.getText().length() == 0 || awayRBStatsView.getText().equals(NO_STATS)) {
+                        awayRBStatsView.setText(playerStats.getRBStatsAsString());
+                    }
+                } else {
+                    if (homeRBStatsView.getText().length() == 0 || homeRBStatsView.getText().equals(NO_STATS)) {
+                        homeRBStatsView.setText(playerStats.getRBStatsAsString());
+                    }
                 }
             }
         }
@@ -435,18 +439,20 @@ public class GameActivity extends AppCompatActivity {
         // Checks if each stat in the provided stats corresponds to the home or away team and sets
         // views accordingly, only populates with the top stats and doesn't populate if the view
         // has already been set
-        for (PlayerStats playerStats : wrStats) {
-            if (playerStats.getTeam().getName().equals(awayTeam.getName())) {
-                if (awayWRStatsView1.getText().length() == 0 || awayWRStatsView1.getText().equals(NO_STATS)) {
-                    awayWRStatsView1.setText(playerStats.getWRStatsAsString());
-                } else if (awayWRStatsView2.getText().length() == 0) {
-                    awayWRStatsView2.setText(playerStats.getWRStatsAsString());
-                }
-            } else {
-                if (homeWRStatsView1.getText().length() == 0 || homeWRStatsView1.getText().equals(NO_STATS)) {
-                    homeWRStatsView1.setText(playerStats.getWRStatsAsString());
-                } else if (homeWRStatsView2.getText().length() == 0) {
-                    homeWRStatsView2.setText(playerStats.getWRStatsAsString());
+        if (wrStats != null) {
+            for (PlayerStats playerStats : wrStats) {
+                if (playerStats.getTeam().getName().equals(awayTeam.getName())) {
+                    if (awayWRStatsView1.getText().length() == 0 || awayWRStatsView1.getText().equals(NO_STATS)) {
+                        awayWRStatsView1.setText(playerStats.getWRStatsAsString());
+                    } else if (awayWRStatsView2.getText().length() == 0) {
+                        awayWRStatsView2.setText(playerStats.getWRStatsAsString());
+                    }
+                } else {
+                    if (homeWRStatsView1.getText().length() == 0 || homeWRStatsView1.getText().equals(NO_STATS)) {
+                        homeWRStatsView1.setText(playerStats.getWRStatsAsString());
+                    } else if (homeWRStatsView2.getText().length() == 0) {
+                        homeWRStatsView2.setText(playerStats.getWRStatsAsString());
+                    }
                 }
             }
         }
@@ -462,6 +468,7 @@ public class GameActivity extends AppCompatActivity {
             setQBViews(playerStats[QB_STAT]);
             setRBViews(playerStats[RB_STAT]);
             setWRViews(playerStats[WR_STAT]);
+
         }
 
         @Override
