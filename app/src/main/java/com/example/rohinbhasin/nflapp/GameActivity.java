@@ -474,7 +474,6 @@ public class GameActivity extends AppCompatActivity {
             setQBViews(playerStats[QB_STAT]);
             setRBViews(playerStats[RB_STAT]);
             setWRViews(playerStats[WR_STAT]);
-
         }
 
         @Override

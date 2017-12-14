@@ -83,6 +83,10 @@ public class FormattingUtilities {
      * @return Bitmap: the Bitmap of the corresponding Drawable image.
      */
     public static Bitmap drawableToBitmap (Drawable drawable) {
+        if (drawable == null) {
+            return null;
+        }
+
         Bitmap bitmap = null;
 
         if (drawable instanceof BitmapDrawable) {
